@@ -1,11 +1,143 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-</head>
-<body>
-  <h1>teste!!! deu certo</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block body %}
+<div id="add-btn">
+  <button type="button" class="btn btn-primary align" data-toggle="modal" data-target="#exampleModal">
+    Cadastrar nova noticia
+  </button>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Cadastro de noticia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url_for('main.add_new')}}" method="POST" role="form">
+          <label for="titulo">Titulo</label>
+          <input class="form-control" type="text" required name="titulo">
+          <label for="texto">Texto</label>
+          <input class="form-control" type="text" required name="texto">
+          <label for="autor">Autor</label>
+          <input class="form-control" type="text" required name="autor">
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Adicionar</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<form action="{{url_for('main.search_new')}}" method="POST" role="form">
+  <div class="search">
+    <input placeholder="Search" class="form-control" type="text" name="search_titulo">
+    <div class="dropdown">
+      <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Titulo
+      </a>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <a class="dropdown-item" href="#">Titulo</a>
+   
+      </div>
+    </div>
+  </div>
+</form>
+
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+{% if message != "Nenhum usuario encontrado" %}
+<div class="alert alert-success alert-dismissable" role="alert">
+  {{message}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">X</span>
+  </button>
+  {{message}}
+</div>
+{% else %}
+<div class="alert alert-danger alert-dismissable" role="alert">
+  {{message}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="close">
+    <span aria-hidden="true">X</span>
+  </button>
+  {{message}}
+</div>
+{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% endwith %}
+<div class="align display">
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">Titulo</th>
+        <th scope="col">Texto</th>
+        <th scope="col">Autor</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+      {% for new in news %}
+      <tr>
+        <td>{{new.titulo}}</td>
+        <td>{{new.texto}}</td>
+        <td>{{new.autor}}</td>
+        <td><a href="{{ url_for('main.delete_new', oid=new._id) }}"><i class="fa fa-trash" ></i></a></td>
+        <td><a href="/update_new/{{new._id}}" data-toggle="modal" data-target="#updateModal{{new._id}}"><i class="fa fa-user"></i></a></td>
+      </tr>
+      <div class="modal fade" id="updateModal{{new._id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Editar noticia</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form action="{{url_for('main.update_new', id=new._id)}}" method="POST" role="form">
+                <input type="hidden" name="id" value="id">
+                <label for="titulo">Titulo</label>
+                <input class="form-control" type="text" required value="{{new.titulo}}" name="titulo">
+                <label for="texto">Texto</label>
+                <input class="form-control" type="text" required value="{{new.texto}}" name="texto">
+                <label for="autor">Autor</label>
+                <input class="form-control" type="text" required value="{{new.autor}}" name="autor">
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Alterar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </tbody>
+    
+  </table>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+<script>
+  
+
+  $('#myModal').on('shown.bs.modal', function () {
+  $('#myInput').trigger('focus')
+  })
+
+</script>
+{% endblock %}
